@@ -1,45 +1,51 @@
-﻿using System;
+﻿using CleanCodeExamination.Interfaces;
+using CleanCodeExamination.Views;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace CleanCodeExamination
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
+            IStringIo ui = new ConsoleIo();
 			bool playOn = true;
-            Console.WriteLine("Enter your user name:\n");
-            string name = Console.ReadLine();
+            ui.Output("Enter your user name:\n");
+            string name = ui.Input();
 
             while (playOn)
             {
                 string goal = makeGoal();
-
-
-                Console.WriteLine("New game:\n");
+                ui.Output("New game:\n");
                 //comment out or remove next line to play real games!
-                Console.WriteLine("For practice, number is: " + goal + "\n");
-                string guess = Console.ReadLine();
+                /*Console.WriteLine("For practice, number is: " + goal + "\n");*/
+                string guess = ui.Input();
 
                 int nGuess = 1;
                 string bbcc = checkBC(goal, guess);
-                Console.WriteLine(bbcc + "\n");
+                ui.Output(bbcc + "\n");
                 while (bbcc != "BBBB,")
                 {
                     nGuess++;
-                    guess = Console.ReadLine();
-                    Console.WriteLine(guess + "\n");
+                    guess = ui.Input();
+                    ui.Output(guess + "\n");
                     bbcc = checkBC(goal, guess);
-                    Console.WriteLine(bbcc + "\n");
+                    ui.Output(bbcc + "\n");
                 }
                 StreamWriter output = new StreamWriter("result.txt", append: true);
                 output.WriteLine(name + "#&#" + nGuess);
                 output.Close();
-                showTopList();
-                Console.WriteLine("Correct, it took " + nGuess + " guesses\nContinue?");
-                string answer = Console.ReadLine();
-                if (answer != null && answer != "" && answer.Substring(0, 1) == "n")
+                var sortedTopList = GetSortedTopList();
+                ui.Output("Player   games average");
+                foreach (PlayerData p in sortedTopList)
+                {
+                    ui.Output(string.Format("{0,-9}{1,5:D}{2,9:F2}", p.Name, p.NGames, p.Average()));
+                }
+                ui.Output("Correct, it took " + nGuess + " guesses\nContinue?");
+                string answer = ui.Input();
+                if (!string.IsNullOrEmpty(answer) && answer.Substring(0, 1) == "n")
                 {
                     playOn = false;
                 }
@@ -88,7 +94,7 @@ namespace CleanCodeExamination
             return "BBBB".Substring(0, bulls) + "," + "CCCC".Substring(0, cows);
         }
 
-        static void showTopList()
+        static List<PlayerData> GetSortedTopList()
         {
             StreamReader input = new StreamReader("result.txt");
             List<PlayerData> results = new List<PlayerData>();
@@ -111,13 +117,9 @@ namespace CleanCodeExamination
 
 
             }
-            results.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
-            Console.WriteLine("Player   games average");
-            foreach (PlayerData p in results)
-            {
-                Console.WriteLine(string.Format("{0,-9}{1,5:D}{2,9:F2}", p.Name, p.NGames, p.Average()));
-            }
             input.Close();
+            results.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
+            return results;
         }
     }
 
