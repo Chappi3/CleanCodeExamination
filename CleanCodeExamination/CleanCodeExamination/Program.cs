@@ -1,4 +1,5 @@
 ﻿using CleanCodeExamination.Interfaces;
+using CleanCodeExamination.Models;
 using CleanCodeExamination.Views;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,6 @@ namespace CleanCodeExamination
 			bool playOn = true;
             ui.Output("Enter your user name:\n");
             string name = ui.Input();
-
             while (playOn)
             {
                 string goal = makeGoal();
@@ -22,7 +22,6 @@ namespace CleanCodeExamination
                 //comment out or remove next line to play real games!
                 /*Console.WriteLine("For practice, number is: " + goal + "\n");*/
                 string guess = ui.Input();
-
                 int nGuess = 1;
                 string bbcc = checkBC(goal, guess);
                 ui.Output(bbcc + "\n");
@@ -114,50 +113,10 @@ namespace CleanCodeExamination
                 {
                     results[pos].Update(guesses);
                 }
-
-
             }
             input.Close();
             results.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
             return results;
-        }
-    }
-
-    class PlayerData
-    {
-        public string Name { get; private set; }
-        public int NGames { get; private set; }
-        int totalGuess;
-
-
-        public PlayerData(string name, int guesses)
-        {
-            this.Name = name;
-            NGames = 1;
-            totalGuess = guesses;
-        }
-
-        public void Update(int guesses)
-        {
-            totalGuess += guesses;
-            NGames++;
-        }
-
-        public double Average()
-        {
-            return (double)totalGuess / NGames;
-        }
-
-
-        public override bool Equals(Object p)
-        {
-            return Name.Equals(((PlayerData)p).Name);
-        }
-
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
         }
     }
 }
