@@ -6,22 +6,22 @@ namespace CleanCodeExamination.Models
     {
         public string Name { get; private set; }
         public int NGames { get; private set; }
-        int totalGuess;
+        public int TotalGuess { get; private set; }
 
         public PlayerData(string name, int guesses)
         {
-            this.Name = name;
+            Name = name;
             NGames = 1;
-            totalGuess = guesses;
+            TotalGuess = guesses;
         }
         public void Update(int guesses)
         {
-            totalGuess += guesses;
+            TotalGuess += guesses;
             NGames++;
         }
         public double Average()
         {
-            return (double)totalGuess / NGames;
+            return (double)TotalGuess / NGames;
         }
         public override bool Equals(Object p)
         {
