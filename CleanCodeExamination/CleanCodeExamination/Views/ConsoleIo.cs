@@ -1,4 +1,5 @@
 ﻿using CleanCodeExamination.Interfaces;
+using System.IO;
 using System;
 
 namespace CleanCodeExamination.Views
@@ -7,17 +8,19 @@ namespace CleanCodeExamination.Views
     {
         public void Clear()
         {
-            Console.Clear();
-        }
-
-        public void Exit()
-        {
-            Environment.Exit(0);
+            try
+            {
+                Console.Clear();
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public string Input()
         {
-            return Console.ReadLine();
+            return Console.ReadLine().Trim();
         }
 
         public void Output(string value, bool isNewLine)
