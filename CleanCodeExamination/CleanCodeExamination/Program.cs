@@ -1,7 +1,6 @@
-﻿using CleanCodeExamination.Repositories;
+﻿using CleanCodeExamination.Controllers;
 using CleanCodeExamination.Interfaces;
 using CleanCodeExamination.Views;
-using CleanCodeExamination.Games;
 
 namespace CleanCodeExamination
 {
@@ -10,9 +9,8 @@ namespace CleanCodeExamination
         private static void Main()
         {
             IStringIo ui = new ConsoleIo();
-            IStatistics repository = new MooGameRepository();
-            IGuessGame mooGame = new MooGame(ui, repository);
-            mooGame.Run();
+            GuessGameController gameController = new(ui);
+            gameController.RunGameSelection();
         }
     }
 }
