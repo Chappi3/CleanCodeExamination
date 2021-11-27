@@ -11,7 +11,7 @@ namespace CleanCodeExamination.Repositories
     {
         public IOrderedEnumerable<PlayerData> GetSortedTopList()
         {
-            StreamReader input = new("result.txt");
+            StreamReader input = new("resultMooGame.txt");
             List<PlayerData> results = new();
             string line;
             while ((line = input.ReadLine()) != null)
@@ -36,7 +36,7 @@ namespace CleanCodeExamination.Repositories
 
         public void SaveGame(string name, int numGuesses)
         {
-            StreamWriter output = new("result.txt", append: true);
+            StreamWriter output = new("resultMooGame.txt", append: true);
             output.WriteLine(name + "#&#" + numGuesses);
             output.Close();
         }
