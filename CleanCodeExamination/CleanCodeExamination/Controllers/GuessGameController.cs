@@ -29,7 +29,7 @@ namespace CleanCodeExamination.Controllers
                 switch (input)
                 {
                     case "1":
-                        IStatistics repository = new MooGameRepository();
+                        IRepository repository = new MooGameRepository();
                         IGuessGame mooGame = new MooGame(_ui, repository);
                         mooGame.Run();
                         break;

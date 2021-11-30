@@ -7,7 +7,7 @@ using System;
 
 namespace CleanCodeExamination.Repositories
 {
-    public class MooGameRepository : IStatistics
+    public class MooGameRepository : IRepository
     {
         public IOrderedEnumerable<PlayerData> GetSortedTopList()
         {
@@ -33,7 +33,6 @@ namespace CleanCodeExamination.Repositories
             input.Close();
             return results.OrderBy(p => p.Average());
         }
-
         public void SaveGame(string name, int numGuesses)
         {
             StreamWriter output = new("resultMooGame.txt", append: true);

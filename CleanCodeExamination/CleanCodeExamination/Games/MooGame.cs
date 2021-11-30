@@ -7,9 +7,9 @@ namespace CleanCodeExamination.Games
     public class MooGame : IGuessGame
     {
         private readonly IStringIo _ui;
-        private readonly IStatistics _repository;
+        private readonly IRepository _repository;
 
-        public MooGame(IStringIo ui, IStatistics repository)
+        public MooGame(IStringIo ui, IRepository repository)
         {
             _ui = ui;
             _repository = repository;
