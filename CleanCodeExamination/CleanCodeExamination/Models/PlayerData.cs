@@ -5,23 +5,23 @@ namespace CleanCodeExamination.Models
     public class PlayerData
     {
         public string Name { get; private set; }
-        public int NGames { get; private set; }
-        public int TotalGuess { get; private set; }
+        public int Games { get; private set; }
+        public int Guesses { get; private set; }
 
-        public PlayerData(string name, int guesses)
+        public PlayerData(string name, int guesses = 0, int games = 0)
         {
             Name = name;
-            NGames = 1;
-            TotalGuess = guesses;
+            Games = games;
+            Guesses = guesses;
         }
         public void Update(int guesses)
         {
-            TotalGuess += guesses;
-            NGames++;
+            Guesses += guesses;
+            Games++;
         }
         public double Average()
         {
-            return (double)TotalGuess / NGames;
+            return (double)Guesses / Games;
         }
         public override bool Equals(Object p)
         {

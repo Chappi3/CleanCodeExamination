@@ -1,43 +1,53 @@
 ﻿using CleanCodeExamination.Interfaces;
 using CleanCodeExamination.Models;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Linq;
 using System.IO;
-using System;
 
 namespace CleanCodeExamination.Repositories
 {
     public class MooGameRepository : IRepository
     {
-        public IOrderedEnumerable<PlayerData> GetSortedTopList()
+        private List<PlayerData> _players;
+
+        public MooGameRepository()
         {
-            StreamReader input = new("resultMooGame.txt");
-            List<PlayerData> results = new();
-            string line;
-            while ((line = input.ReadLine()) != null)
-            {
-                string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
-                string name = nameAndScore[0];
-                int guesses = Convert.ToInt32(nameAndScore[1]);
-                PlayerData data = new PlayerData(name, guesses);
-                int pos = results.IndexOf(data);
-                if (pos < 0)
-                {
-                    results.Add(data);
-                }
-                else
-                {
-                    results[pos].Update(guesses);
-                }
-            }
-            input.Close();
-            return results.OrderBy(p => p.Average());
+            _players = new List<PlayerData>();
         }
-        public void SaveGame(string name, int numGuesses)
+
+        public List<PlayerData> GetPlayersSortedByAverage()
         {
-            StreamWriter output = new("resultMooGame.txt", append: true);
-            output.WriteLine(name + "#&#" + numGuesses);
-            output.Close();
+            return _players.OrderBy(p => p.Average()).ToList();
+        }
+        public void LoadData()
+        {
+            if (File.Exists("resultMooGame.txt"))
+            {
+                var jsonText = File.ReadAllText("resultMooGame.txt");
+                _players = JsonSerializer.Deserialize<List<PlayerData>>(jsonText);
+            }
+        }
+        public void SaveData()
+        {
+            var json = JsonSerializer.Serialize(_players);
+            File.WriteAllText("resultMooGame.txt", json);
+        }
+        public PlayerData GetPlayerByName(string name)
+        {
+            var player = _players.FirstOrDefault(p => p.Name == name);
+            if (player is null)
+            {
+                return InitializeNewPlayer(name);
+            }
+            return player;
+        }
+
+        private PlayerData InitializeNewPlayer(string name)
+        {
+            PlayerData player = new(name);
+            _players.Add(player);
+            return player;
         }
     }
 }

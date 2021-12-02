@@ -14,45 +14,54 @@ namespace CleanCodeExamination.Games
             _ui = ui;
             _repository = repository;
         }
+
         public void Run()
         {
-            bool playOn = true;
-            _ui.Output("Enter your username:\n");
-            string name = _ui.Input();
-            while (playOn)
+            var playOn = true;
+            _repository.LoadData();
+            var player = GetPlayerByInput();
+            do
             {
-                string goal = MakeGoal();
-                _ui.Output("New game:\n");
-                //comment out or remove next line to play real games!
-                //ui.Output("For practice, number is: " + goal + "\n");
-                string guess = _ui.Input();
-                int nGuess = 1;
-                string result = CheckGuess(goal, guess);
-                _ui.Output(result + "\n");
-                while (result != "BBBB,")
-                {
-                    nGuess++;
-                    guess = _ui.Input();
-                    _ui.Output(guess + "\n");
-                    result = CheckGuess(goal, guess);
-                    _ui.Output(result + "\n");
-                }
-                _repository.SaveGame(name, nGuess);
-                var sortedTopList = _repository.GetSortedTopList();
-                _ui.Output("Player   games average");
-                foreach (PlayerData p in sortedTopList)
-                {
-                    _ui.Output(string.Format("{0,-9}{1,5:D}{2,9:F2}", p.Name, p.NGames, p.Average()));
-                }
-                _ui.Output("Correct, it took " + nGuess + " guesses\nContinue?");
+                var goal = CreateGoal();
+                var guesses = PlayGame(goal);
+                player.Update(guesses);
+                PrintTopList();
+                _ui.Output($"Correct, it took {guesses} guesses\nContinue?");
                 string answer = _ui.Input();
                 if (!string.IsNullOrEmpty(answer) && answer.Substring(0, 1) == "n")
                 {
+                    _repository.SaveData();
                     playOn = false;
                 }
+            } while (playOn);
+        }
+        public void PrintTopList()
+        {
+            var sortedTopList = _repository.GetPlayersSortedByAverage();
+            _ui.Output("Player   games average");
+            foreach (PlayerData p in sortedTopList)
+            {
+                _ui.Output(string.Format("{0,-9}{1,5:D}{2,9:F2}", p.Name, p.Games, p.Average()));
             }
         }
-        public string MakeGoal()
+        public int PlayGame(string goal)
+        {
+            _ui.Output("New game:\n");
+            //comment out or remove next line to play real games!
+            //_ui.Output($"For practice, number is: {goal}\n");
+            string result;
+            int guesses = 0;
+            do
+            {
+                guesses++;
+                var guess = _ui.Input();
+                _ui.Output(guess + "\n");
+                result = CheckGuess(goal, guess);
+                _ui.Output(result + "\n");
+            } while (result != "BBBB,");
+            return guesses;
+        }
+        public string CreateGoal()
         {
             Random randomGenerator = new();
             string goal = "";
@@ -72,7 +81,8 @@ namespace CleanCodeExamination.Games
         public string CheckGuess(string goal, string guess)
         {
             int cows = 0, bulls = 0;
-            guess += "    ";     // if player entered less than 4 chars
+            guess += "    ";    // if player entered less than 4 chars
+            guess += guess.PadRight(4, ' ');
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
@@ -90,7 +100,24 @@ namespace CleanCodeExamination.Games
                     }
                 }
             }
-            return "BBBB".Substring(0, bulls) + "," + "CCCC".Substring(0, cows);
+            return $"{"BBBB".Substring(0, bulls)},{"CCCC".Substring(0, cows)}";
+        }
+        public PlayerData GetPlayerByInput()
+        {
+            string name;
+            do
+            {
+                _ui.Clear();
+                _ui.Output("Enter your username:\n");
+                name = _ui.Input();
+            } while (name.Length < 1);
+
+            PlayerData player = _repository.GetPlayerByName(name);
+            if (player is null)
+            {
+                player = new PlayerData(name);
+            }
+            return player;
         }
     }
 }
