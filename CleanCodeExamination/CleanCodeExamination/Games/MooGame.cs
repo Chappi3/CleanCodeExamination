@@ -81,7 +81,6 @@ namespace CleanCodeExamination.Games
         public string CheckGuess(string goal, string guess)
         {
             int cows = 0, bulls = 0;
-            guess += "    ";    // if player entered less than 4 chars
             guess += guess.PadRight(4, ' ');
             for (int i = 0; i < 4; i++)
             {
