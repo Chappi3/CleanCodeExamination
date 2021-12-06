@@ -9,16 +9,18 @@ namespace CleanCodeExamination.Controllers
     public class GuessGameController
     {
         private readonly IStringIo _ui;
-        private readonly List<string> games;
+        private readonly Dictionary<string, IGuessGame> games;
+        private readonly IRepository _repository;
 
-        public GuessGameController(IStringIo ui)
+        public GuessGameController(IStringIo ui, IRepository repository)
         {
             _ui = ui;
-            games = new List<string> 
+            games = new Dictionary<string, IGuessGame> 
             {
-                { "Moo Game" },
-                { "Master Mind" }
+                { "Moo Game", new MooGame(_ui, repository)},
+                { "Master Mind", new MasterMindGame() }
             };
+            _repository = repository;
         }
         public void RunGameSelection()
         {
@@ -30,13 +32,12 @@ namespace CleanCodeExamination.Controllers
                 switch (input)
                 {
                     case "1":
-                        IRepository mooGameRepository = new MooGameRepository();
+                        IRepository mooGameRepository = new GuessGameFileRepository();
                         IGuessGame mooGame = new MooGame(_ui, mooGameRepository);
                         mooGame.Run();
                         break;
                     case "2":
-                        IRepository masterMindRepository = new MasterMindRepository();
-                        IGuessGame masterMindGame = new MasterMindGame(_ui, masterMindRepository);
+                        IGuessGame masterMindGame = new MasterMindGame();
                         break;
                     case "q":
                         Environment.Exit(0);

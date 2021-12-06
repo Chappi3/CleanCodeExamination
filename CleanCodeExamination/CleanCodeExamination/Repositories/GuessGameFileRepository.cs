@@ -7,11 +7,11 @@ using System.IO;
 
 namespace CleanCodeExamination.Repositories
 {
-    public class MooGameRepository : IRepository
+    public class GuessGameFileRepository : IRepository
     {
         private List<PlayerData> _players;
 
-        public MooGameRepository()
+        public GuessGameFileRepository()
         {
             _players = new List<PlayerData>();
         }
@@ -20,18 +20,18 @@ namespace CleanCodeExamination.Repositories
         {
             return _players.OrderBy(p => p.Average()).ToList();
         }
-        public void LoadData()
+        public void LoadData(string selectedGame)
         {
-            if (File.Exists("resultMooGame.txt"))
+            if (File.Exists($"result{selectedGame}.txt"))
             {
-                var jsonText = File.ReadAllText("resultMooGame.txt");
+                var jsonText = File.ReadAllText($"result{selectedGame}.txt");
                 _players = JsonSerializer.Deserialize<List<PlayerData>>(jsonText);
             }
         }
-        public void SaveData()
+        public void SaveData(string selectedGame)
         {
             var json = JsonSerializer.Serialize(_players);
-            File.WriteAllText("resultMooGame.txt", json);
+            File.WriteAllText($"result{selectedGame}.txt", json);
         }
         public PlayerData GetPlayerByName(string name)
         {

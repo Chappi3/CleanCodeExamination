@@ -6,8 +6,8 @@ namespace CleanCodeExamination.Interfaces
     public interface IRepository
     {
         List<PlayerData> GetPlayersSortedByAverage();
-        void SaveData();
-        void LoadData();
+        void SaveData(string selectedGame);
+        void LoadData(string selectedGame);
         PlayerData GetPlayerByName(string name);
     }
 }
