@@ -35,7 +35,7 @@ namespace CleanCodeExamination.Repositories
         }
         public PlayerData GetPlayerByName(string name)
         {
-            var player = _players.FirstOrDefault(p => p.Name == name);
+            var player = _players.FirstOrDefault(p => p.Name.Equals(name));
             if (player is null)
             {
                 return InitializeNewPlayer(name);

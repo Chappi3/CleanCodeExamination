@@ -1,7 +1,7 @@
-﻿using CleanCodeExamination.Interfaces;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CleanCodeExamination.Interfaces;
 using System.IO;
+using System;
 
 namespace CleanCodeExamination.Views
 {

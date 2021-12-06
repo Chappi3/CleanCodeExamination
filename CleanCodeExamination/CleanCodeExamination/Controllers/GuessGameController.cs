@@ -16,7 +16,8 @@ namespace CleanCodeExamination.Controllers
             _ui = ui;
             games = new List<string> 
             {
-                { "MooGame" }
+                { "Moo Game" },
+                { "Master Mind" }
             };
         }
         public void RunGameSelection()
@@ -29,9 +30,13 @@ namespace CleanCodeExamination.Controllers
                 switch (input)
                 {
                     case "1":
-                        IRepository repository = new MooGameRepository();
-                        IGuessGame mooGame = new MooGame(_ui, repository);
+                        IRepository mooGameRepository = new MooGameRepository();
+                        IGuessGame mooGame = new MooGame(_ui, mooGameRepository);
                         mooGame.Run();
+                        break;
+                    case "2":
+                        IRepository masterMindRepository = new MasterMindRepository();
+                        IGuessGame masterMindGame = new MasterMindGame(_ui, masterMindRepository);
                         break;
                     case "q":
                         Environment.Exit(0);
