@@ -1,38 +1,46 @@
 ﻿using CleanCodeExamination.Interfaces;
-using CleanCodeExamination.Models;
+using System;
 
 namespace CleanCodeExamination.Games
 {
     class MasterMindGame : IGuessGame
     {
-        public string CheckGuess(string goal, string guess)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public string CreateGoal()
         {
-            throw new System.NotImplementedException();
+            var colors = "GBYPL"; // Green, Blue, Yellow, Purple, Lime
+            var randomGenerator = new Random();
+            var goal = "";
+
+            for (int i = 0; i < 4; i++)
+            {
+                goal += colors[randomGenerator.Next(colors.Length - 1)];
+            }
+
+            return goal;
         }
 
-        public PlayerData GetPlayerByInput()
+        public string CheckGuess(string goal, string guess)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public int PlayGame(string goal)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void PrintTopList()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Run()
-        {
-            throw new System.NotImplementedException();
+            int whitePins = 0, RedPins = 0;
+            guess += guess.PadRight(4, ' ').ToUpper();
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (goal[i] == guess[j])
+                    {
+                        if (i == j)
+                        {
+                            RedPins++;
+                        }
+                        else
+                        {
+                            whitePins++;
+                        }
+                    }
+                }
+            }
+            return $"{"RRRR".Substring(0, RedPins)},{"WWWW".Substring(0, whitePins)}";
         }
     }
 }

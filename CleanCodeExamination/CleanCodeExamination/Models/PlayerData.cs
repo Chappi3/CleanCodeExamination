@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CleanCodeExamination.Models
+﻿namespace CleanCodeExamination.Models
 {
     public class PlayerData
     {
@@ -14,22 +12,16 @@ namespace CleanCodeExamination.Models
             Games = games;
             Guesses = guesses;
         }
+
         public void Update(int guesses)
         {
             Guesses += guesses;
             Games++;
         }
+
         public double Average()
         {
             return (double)Guesses / Games;
-        }
-        public override bool Equals(Object p)
-        {
-            return Name.Equals(((PlayerData)p).Name);
-        }
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
         }
     }
 }
