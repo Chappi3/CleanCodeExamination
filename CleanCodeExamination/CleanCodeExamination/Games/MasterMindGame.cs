@@ -22,7 +22,8 @@ namespace CleanCodeExamination.Games
         public string CheckGuess(string goal, string guess)
         {
             int whitePins = 0, RedPins = 0;
-            guess += guess.PadRight(4, ' ').ToUpper();
+            guess += guess.PadRight(4, ' ');
+            guess = guess.ToUpper();
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
