@@ -2,6 +2,7 @@
 using CleanCodeExamination.Models;
 using CleanCodeExamination.Games;
 using System.Collections.Generic;
+using System.Linq;
 using System;
 
 namespace CleanCodeExamination.Controllers
@@ -10,16 +11,16 @@ namespace CleanCodeExamination.Controllers
     {
         private readonly IStringIo _ui;
         private readonly IRepository _repository;
-        private readonly Dictionary<string, IGuessGame> games;
+        private readonly Dictionary<(int number, string name), Func<IGuessGame>> games;
 
         public GuessGameController(IStringIo ui, IRepository repository)
         {
             _ui = ui;
             _repository = repository;
-            games = new Dictionary<string, IGuessGame> 
+            games = new Dictionary<(int, string), Func<IGuessGame>>
             {
-                { "Moo Game", new MooGame()},
-                { "Master Mind", new MasterMindGame() }
+                { (1, "Moo Game"), () => new MooGame() },
+                { (2, "Master Mind"), () => new MasterMindGame() }
             };
         }
 
@@ -30,28 +31,38 @@ namespace CleanCodeExamination.Controllers
             {
                 PrintMenu();
                 var input = _ui.Input();
-                switch (input)
-                {
-                    case "1":
-                        RunGame("mooGame", games["Moo Game"!]);
-                        break;
-                    case "2":
-                        RunGame("masterMindGame", games["Master Mind"!]);
-                        break;
-                    case "q":
-                        Environment.Exit(0);
-                        break;
-                    default:
-                        break;
-                }
 
+                if (input.Equals("q"))
+                {
+                    isSelectingGame = false;
+                }
+                else if (int.TryParse(input, out int chosenGameNumber))
+                {
+                    var game = games.FirstOrDefault(k => k.Key.number == chosenGameNumber);
+                    
+                    if (game.Value is not null)
+                    {
+                        RunGame(game.Value.Invoke());
+                    }
+                    else
+                    {
+                        _ui.Clear();
+                        _ui.Output("Game not found!");
+                    }
+                }
+                else
+                {
+                    _ui.Clear();
+                    _ui.Output("Command not found!");
+                }
             } while (isSelectingGame);
+            Environment.Exit(0);
         }
 
-        private void RunGame(string selectedGame, IGuessGame guessGame)
+        private void RunGame(IGuessGame guessGame)
         {
             var playOn = true;
-            _repository.LoadData(selectedGame);
+            _repository.LoadData(guessGame.GetType().Name);
             var player = GetPlayerByInput();
             do
             {
@@ -63,7 +74,7 @@ namespace CleanCodeExamination.Controllers
                 string answer = _ui.Input();
                 if (!string.IsNullOrEmpty(answer) && answer.Substring(0, 1) == "n")
                 {
-                    _repository.SaveData(selectedGame);
+                    _repository.SaveData(guessGame.GetType().Name);
                     playOn = false;
                 }
             } while (playOn);
@@ -72,11 +83,9 @@ namespace CleanCodeExamination.Controllers
         private void PrintMenu()
         {
             _ui.Output("----- Games -----");
-            var counter = 1;
             foreach (var game in games)
             {
-                _ui.Output($"{counter}. {game.Key}");
-                counter++;
+                _ui.Output($"{game.Key.number}. {game.Key.name}");
             }
             _ui.Output("Select a game by typing the corresponding number.");
             _ui.Output("Exit = q");
@@ -105,16 +114,17 @@ namespace CleanCodeExamination.Controllers
             _ui.Output("New game:\n");
             //comment out or remove next line to play real games!
             //_ui.Output($"For practice, number is: {goal}\n");
-            string result;
+            bool isCorrect;
             int guesses = 0;
             do
             {
                 guesses++;
                 var guess = _ui.Input();
                 _ui.Output(guess + "\n");
-                result = guessGame.CheckGuess(goal, guess);
-                _ui.Output(result + "\n");
-            } while (result != "BBBB,");
+                var checkedGuess = guessGame.CheckGuess(goal, guess);
+                _ui.Output(checkedGuess.result + "\n");
+                isCorrect = checkedGuess.isCorrect;
+            } while (!isCorrect);
             return guesses;
         }
 

@@ -5,11 +5,13 @@ namespace CleanCodeExamination.Games
 {
     public class MooGame : IGuessGame
     {
+        private const int numberAmount = 4;
+
         public string CreateGoal()
         {
             Random randomGenerator = new();
             string goal = "";
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < numberAmount; i++)
             {
                 int random = randomGenerator.Next(10);
                 string randomDigit = "" + random;
@@ -22,13 +24,13 @@ namespace CleanCodeExamination.Games
             }
             return goal;
         }
-        public string CheckGuess(string goal, string guess)
+        public (string result, bool isCorrect) CheckGuess(string goal, string guess)
         {
             int cows = 0, bulls = 0;
-            guess += guess.PadRight(4, ' ');
-            for (int i = 0; i < 4; i++)
+            guess += guess.PadRight(numberAmount, ' ');
+            for (int i = 0; i < numberAmount; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < numberAmount; j++)
                 {
                     if (goal[i] == guess[j])
                     {
@@ -43,7 +45,7 @@ namespace CleanCodeExamination.Games
                     }
                 }
             }
-            return $"{"BBBB".Substring(0, bulls)},{"CCCC".Substring(0, cows)}";
+            return ($"{"BBBB".Substring(0, bulls)},{"CCCC".Substring(0, cows)}", bulls == numberAmount);
         }
     }
 }

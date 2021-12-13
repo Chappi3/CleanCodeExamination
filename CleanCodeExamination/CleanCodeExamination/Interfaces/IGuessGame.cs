@@ -3,6 +3,6 @@
     public interface IGuessGame
     {
         string CreateGoal();
-        string CheckGuess(string goal, string guess);
+        (string result, bool isCorrect) CheckGuess(string goal, string guess);
     }
 }
